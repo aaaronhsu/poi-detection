@@ -1,0 +1,7 @@
+path: ../datasets/poi  # dataset root dir
+train: images/train
+val: images/val
+
+# Classes
+names:
+  0: poi
