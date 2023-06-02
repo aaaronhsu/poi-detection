@@ -115,6 +115,12 @@ def run(
     save_dir = increment_path(Path(project) / name, exist_ok=exist_ok)  # increment run
     (save_dir / 'labels' if save_txt else save_dir).mkdir(parents=True, exist_ok=True)  # make dir
 
+    # remove tmp folder if exists
+    tmp_folder = os.path.join("runs", "tmp")
+    if os.path.exists(tmp_folder):
+        import shutil
+        shutil.rmtree(tmp_folder)
+
     # Load model
     device = select_device(device)
     model = DetectMultiBackend(weights, device=device, dnn=dnn, data=data, fp16=half)
@@ -187,8 +193,8 @@ def run(
 
                 # Write results
                 for *xyxy, conf, cls in reversed(det):
-
-                    xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
+                    
+                    xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4))).view(-1).tolist()  # normalized xywh
                     type = int(cls.item())
                     process_coordinates(type, xywh)
 
