@@ -50,8 +50,8 @@ from utils.plots import Annotator, colors, save_one_box
 from utils.torch_utils import select_device, smart_inference_mode
 
 def process_coordinates(type, xywh):
-    x_center = xywh[0] + xywh[2]/2
-    y_center = xywh[1] + xywh[3]/2
+    x_center = (xywh[0] + xywh[2])/2
+    y_center = (xywh[1] + xywh[3])/2
 
     tmp_folder = os.path.join("runs", "tmp")
     
@@ -194,9 +194,9 @@ def run(
                 # Write results
                 for *xyxy, conf, cls in reversed(det):
                     
-                    xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4))).view(-1).tolist()  # normalized xywh
+                    # xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4))).view(-1).tolist()  # normalized xywh
                     type = int(cls.item())
-                    process_coordinates(type, xywh)
+                    process_coordinates(type, xyxy)
 
                     if save_txt:  # Write to file
                         xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
