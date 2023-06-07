@@ -1,3 +1,5 @@
 __pycache__/
 .DS_Store
 runs/
+yolov5/other-weights/
+yolov5/runs/
