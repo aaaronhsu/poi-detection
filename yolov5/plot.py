@@ -1,13 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy import optimize
 
 # open poi.txt file and read the content
 with open('./runs/tmp/poi/poi.txt', 'r') as f:
     content = f.readlines()
-
-# read only first 200 lines
-# content = content[0:20]
 
 content = [x.strip() for x in content]
 content = [x.split(',') for x in content]
@@ -16,12 +12,12 @@ content = [[float(x) for x in y] for y in content]
 data = np.array(content)
 x,y = data.T
 
-# x = cos(t) 
-# y = sin(t)
+def calculate_r_squared(x_values, y_values, parametric_equation):
+    # Calculate the predicted y values using the parametric equation
+    y_predicted = parametric_equation(x_values)
 
-# x, y
-def squared_dist(t, x, y):
-    return (x - np.cos(t))**2 + (y - np.sin(t))**2
+    # Calculate the mean of the observed y values
+    y_mean = np.mean(y_values)
 
 minimum = optimize.fmin(squared_dist, 0, (2,0))
 print(minimum[0])
@@ -56,3 +52,27 @@ plt.ylim(700, 1500)
 
 
 plt.show()
+    # Calculate the total sum of squares (SST)
+    sst = np.sum((y_values - y_mean) ** 2)
+
+    # Calculate the sum of squares of residuals (SSE)
+    sse = np.sum((y_values - y_predicted) ** 2)
+
+    # Calculate the coefficient of determination (R^2)
+    r_squared = 1 - (sse / sst)
+
+    return r_squared
+
+def parametric_equation(x):
+    t = np.arccos(x)
+    return np.sin(t)
+
+x = x / np.max(np.abs(x))
+
+# Calculate the R^2 value
+r_squared = calculate_r_squared(x, y, parametric_equation)
+
+# Print the result
+print("R^2 value:", r_squared)
+# plt.scatter(x,y)
+# plt.show()
