@@ -11,7 +11,7 @@ x_coords, y_coords = coordinates  # you can extract the coordinates like this
 
 # this is how you can define a parametric curve
 parametric1 = Parametric(flowers.circle_x, flowers.circle_y)
-parametric2 = Parametric(flowers.circle_x, flowers.circle_y)
+parametric2 = Parametric(flowers.antispin_x, flowers.antispin_y)
 
 # calculate how similar the two parametrics are (note that this prints a very small number, close to 0 because it's comparing two circles)
 loss = parametric1.generate_loss(parametric2.coords)

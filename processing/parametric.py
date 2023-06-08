@@ -24,7 +24,7 @@ class Parametric:
 
         for point in points:
             # pass in parametric and point to find min distance
-            min_dist = math_helper.find_min_distance((self.x, self.y), point)
+            min_dist = math_helper.find_min_distance2(self, point)
             loss += min_dist[1]
 
         return loss / len(points)
