@@ -15,7 +15,8 @@ class FileReader:
         self.file_content = [x.split(",") for x in self.file_content]
         self.file_content = [[float(x) for x in y] for y in self.file_content]
 
-        # shape of coordinates is (2, n)
-        coordinates = np.array(self.file_content).T
+        # shape of coords is (n, 2)
+        self.coords = np.array(self.file_content)
 
-        return coordinates
+        # but we return the transpose so we can easily access the x and y coordinates
+        return self.coords.T

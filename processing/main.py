@@ -17,5 +17,8 @@ parametric2 = Parametric(flowers.circle_x, flowers.circle_y)
 loss = parametric1.generate_loss(parametric2.coords)
 print(loss)
 
-# this is how you can plot the parametric curve
+# this is how you can plot the file's points
+graph.create_graph(file.coords)
+
+# same as above, but for the parametric curve
 graph.create_graph(parametric1.coords)
