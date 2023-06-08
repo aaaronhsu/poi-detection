@@ -1,6 +1,6 @@
 import math
 import numpy as np
-import math_helper
+import fitting
 
 
 class Parametric:
@@ -24,7 +24,7 @@ class Parametric:
 
         for point in points:
             # pass in parametric and point to find min distance
-            min_dist = math_helper.find_min_distance2(self, point)
+            min_dist = fitting.find_min_distance(self, point)
             loss += min_dist[1]
 
         return loss / len(points)
