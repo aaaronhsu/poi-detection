@@ -1,4 +1,5 @@
 import math
+import random
 import numpy as np
 import fitting
 
@@ -17,53 +18,37 @@ class Parametric:
         self.coords = np.stack((self.x_coords, self.y_coords), 1)
         return self.x, self.y
 
-    def generate_loss(self, points):
-        # find the minimum distance between points and the parametric curve stored in self.x_coords and self.y_coords
-
-        loss = 0
-
-        for point in points:
-            # pass in parametric and point to find min distance
-            min_dist = fitting.find_min_distance(self, point)
-            loss += min_dist[1]
-
-        # print("Loss from", points, loss)
-
-        return loss / len(points)
-
     def fit(self, points):
-        x_trans = 0
-        y_trans = 0
-
         cpy_points = points.copy()
         print(points)
 
-        current_loss = self.generate_loss(cpy_points)
+        x_trans, y_trans = fitting.calculate_centroid(cpy_points) - fitting.calculate_centroid(self.coords) # calculate the translation needed to move the points to the origin
+        scale = 1 
+        cpy_para_points = self.coords.copy()
 
+        current_loss = fitting.evaluate_transformation(x_trans, y_trans, scale, cpy_points, cpy_para_points) # calculate the loss of the current transformation
+
+        loss = [current_loss]
+
+        # TODO gradient descent on the scale of the parametric curve
         while True:
-            cpy_points[:, 0] -= 0.1
-            print("shifting x by 1, current loss is", current_loss)
+            if len(loss) % 5 == 0: # determine if you should break out of the loop
+                slope = np.polyfit(range(5), loss[-5:], 1)[0]
+                if abs(slope) < 0.5:
+                    break
+            
+            rng_scale = 1
+            rng = random.random()
+            rng_scale *= (rng + 0.5)
+            scale_loss = fitting.evaluate_transformation(x_trans, y_trans, rng_scale, cpy_points, cpy_para_points) # calculate the loss of the current transformation
+            delta_loss = scale_loss - loss[-1] # calculate the change in loss
+            if delta_loss < 0: # if the loss decreased, keep the scale
+                scale = rng_scale
+            else: # if the loss increased, revert the scale
+                scale *= (1/rng_scale)
+                scale_loss = fitting.evaluate_transformation(x_trans, y_trans, rng_scale, cpy_points, cpy_para_points) # calculate the loss of the current transformation
+            loss.append(scale_loss)
 
-            new_loss = self.generate_loss(cpy_points)
-            print("new loss is", new_loss)
+        print(loss)
 
-            if new_loss > current_loss:
-                cpy_points[:, 0] += 0.1
-                break
-            current_loss = new_loss
-
-        current_loss = new_loss
-
-        while True:
-            cpy_points[:, 1] -= 0.1
-            print("shifting y by 1, current loss is", current_loss)
-
-            new_loss = self.generate_loss(cpy_points)
-            print("new loss is", new_loss)
-
-            if new_loss > current_loss:
-                cpy_points[:, 1] += 0.1
-                break
-            current_loss = new_loss
-
-        return cpy_points
+        return loss, fitting.transform(cpy_para_points, x_trans, y_trans, scale)

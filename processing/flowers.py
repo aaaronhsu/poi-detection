@@ -17,6 +17,14 @@ def antispin_y(t):
     return np.sin(-t) + np.sin(3 * t)
 
 
+def gen_circle_x(trans, scale):
+    return lambda t: scale * np.cos(t) + trans
+
+
+def gen_circle_y(trans, scale):
+    return lambda t: scale * np.sin(t) + trans
+
+
 def circle_x(t):
     return np.cos(t)
 
