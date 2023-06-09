@@ -27,4 +27,43 @@ class Parametric:
             min_dist = fitting.find_min_distance(self, point)
             loss += min_dist[1]
 
+        # print("Loss from", points, loss)
+
         return loss / len(points)
+
+    def fit(self, points):
+        x_trans = 0
+        y_trans = 0
+
+        cpy_points = points.copy()
+        print(points)
+
+        current_loss = self.generate_loss(cpy_points)
+
+        while True:
+            cpy_points[:, 0] -= 0.1
+            print("shifting x by 1, current loss is", current_loss)
+
+            new_loss = self.generate_loss(cpy_points)
+            print("new loss is", new_loss)
+
+            if new_loss > current_loss:
+                cpy_points[:, 0] += 0.1
+                break
+            current_loss = new_loss
+
+        current_loss = new_loss
+
+        while True:
+            cpy_points[:, 1] -= 0.1
+            print("shifting y by 1, current loss is", current_loss)
+
+            new_loss = self.generate_loss(cpy_points)
+            print("new loss is", new_loss)
+
+            if new_loss > current_loss:
+                cpy_points[:, 1] += 0.1
+                break
+            current_loss = new_loss
+
+        return cpy_points

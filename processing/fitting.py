@@ -16,7 +16,7 @@ def find_min_distance(parametric, point):
             min_dist = square_dist(pt[0], pt[1], x, y)
             min_point = pt
 
-    return [pt], min_dist
+    return [min_point], min_dist
 
 
 # this function is the same as the function above, but uses optimize.fmin which is less accurate
