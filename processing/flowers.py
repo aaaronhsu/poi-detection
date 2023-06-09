@@ -1,12 +1,12 @@
 import numpy as np
 
-# creating generic antispins does not work this way bc int + function isn't supportedt
-# def gen_antispin_x(trans, scale):
-#     return scale * antispin_x + trans
+
+def gen_antispin_x(trans, scale, petals, rot=0):
+    return lambda t: scale * (np.cos(-t) + np.cos((petals - 1) * (t + rot))) + trans
 
 
-# def gen_antispin_y(trans, scale):
-#     return scale * antispin_y + trans
+def gen_antispin_y(trans, scale, petals, rot=0):
+    return lambda t: scale * (np.sin(-t) + np.sin((petals - 1) * (t + rot))) + trans
 
 
 def antispin_x(t):
