@@ -35,26 +35,79 @@ class Parametric:
         )  # calculate the loss of the current transformation
 
         loss = [current_loss]
+        dir_x_change = []
+        dir_y_change = []
+        dir_scale_change = []
 
         # TODO gradient descent on the scale of the parametric curve
         while True:
-            if loss[-1] < 0.1:
+            if loss[-1] < 0.05 or (
+                np.mean(dir_x_change[-6:]) == 0
+                and np.mean(dir_y_change[-6:]) == 0
+                and np.mean(dir_scale_change[-6:]) == 0
+            ):
                 break
 
-            rng_scale = 1
-            rng = random.random()
-            rng_scale *= rng + 0.5
-            scale_loss = fitting.evaluate_transformation(
-                x_trans, y_trans, rng_scale, cpy_poi_points, cpy_para_points
+            increase_x_loss = fitting.evaluate_transformation(
+                1.01 * x_trans, y_trans, scale, cpy_poi_points, cpy_para_points
             )  # calculate the loss of the current transformation
-            delta_loss = scale_loss - loss[-1]  # calculate the change in loss
-            if delta_loss < 0:  # if the loss decreased, keep the scale
-                scale = rng_scale
-            else:  # if the loss increased, revert the scale
-                scale *= 1 / rng_scale
-                scale_loss = fitting.evaluate_transformation(
-                    x_trans, y_trans, rng_scale, cpy_poi_points, cpy_para_points
-                )  # calculate the loss of the current transformation
-            loss.append(scale_loss)
+            decrease_x_loss = fitting.evaluate_transformation(
+                0.99 * x_trans, y_trans, scale, cpy_poi_points, cpy_para_points
+            )  # calculate the loss of the current transformation
+
+            delta_x_loss_increase = increase_x_loss - loss[-1]
+            delta_x_loss_decrease = decrease_x_loss - loss[-1]
+
+            increase_y_loss = fitting.evaluate_transformation(
+                x_trans, 1.01 * y_trans, scale, cpy_poi_points, cpy_para_points
+            )  # calculate the loss of the current transformation
+            decrease_y_loss = fitting.evaluate_transformation(
+                x_trans, 0.99 * y_trans, scale, cpy_poi_points, cpy_para_points
+            )  # calculate the loss of the current transformation
+
+            delta_y_loss_increase = increase_y_loss - loss[-1]
+            delta_y_loss_decrease = decrease_y_loss - loss[-1]
+
+            increase_scale_loss = fitting.evaluate_transformation(
+                x_trans, y_trans, 1.01 * scale, cpy_poi_points, cpy_para_points
+            )  # calculate the loss of the current transformation
+            decrease_scale_loss = fitting.evaluate_transformation(
+                x_trans, y_trans, 0.99 * scale, cpy_poi_points, cpy_para_points
+            )  # calculate the loss of the current transformation
+
+            delta_scale_loss_increase = increase_scale_loss - loss[-1]
+            delta_scale_loss_decrease = decrease_scale_loss - loss[-1]
+
+            if delta_x_loss_increase < delta_x_loss_decrease:
+                x_trans *= 1.01
+                dir_x_change.append(1)
+                print("increase x loss", increase_x_loss)
+            else:
+                x_trans *= 0.99
+                dir_x_change.append(-1)
+                print("decrease x loss", decrease_x_loss)
+
+            if delta_y_loss_increase < delta_y_loss_decrease:
+                y_trans *= 1.01
+                dir_y_change.append(1)
+                print("increase y loss", increase_y_loss)
+            else:
+                y_trans *= 0.99
+                dir_y_change.append(-1)
+                print("decrease y loss", decrease_y_loss)
+
+            if delta_scale_loss_increase < delta_scale_loss_decrease:
+                scale *= 1.01
+                dir_x_change.append(1)
+                print("increase scale loss", increase_scale_loss)
+            else:
+                scale *= 0.99
+                dir_x_change.append(-1)
+                print("decrease scale loss", decrease_scale_loss)
+
+            new_loss = fitting.evaluate_transformation(
+                x_trans, y_trans, scale, cpy_poi_points, cpy_para_points
+            )  # calculate the loss of the current transformation
+            loss.append(new_loss)
 
         return loss, fitting.transform(cpy_para_points, x_trans, y_trans, scale)
