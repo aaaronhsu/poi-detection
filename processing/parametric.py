@@ -41,7 +41,7 @@ class Parametric:
 
         # TODO gradient descent on the scale of the parametric curve
         while True:
-            if loss[-1] < 0.05 or (
+            if loss[-1] < 0.015 or (
                 np.mean(dir_x_change[-6:]) == 0
                 and np.mean(dir_y_change[-6:]) == 0
                 and np.mean(dir_scale_change[-6:]) == 0
