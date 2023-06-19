@@ -34,6 +34,21 @@ def circle_y(t):
     return np.sin(t)
 
 
+def fit_three_petal_antispin(poi_points):
+    print("Testing 3 petal antispin...")
+    three_petal_anti_loss, three_petal_anti_points = Parametric(
+        gen_antispin_x(0, 1, 3), gen_antispin_y(0, 1, 3)
+    ).fit(poi_points)
+
+    print("Evaluated three petal antispin loss:", three_petal_anti_loss, "\n")
+
+    return {
+        "loss": three_petal_anti_loss,
+        "points": three_petal_anti_points,
+        "name": "3 petal antispin",
+    }
+
+
 def fit_four_petal_antispin(poi_points):
     print("Testing 4 petal antispin...")
     four_petal_anti_loss, four_petal_anti_points = Parametric(
@@ -65,7 +80,11 @@ def fit_circle(poi_points):
 
 
 def fit_all(poi_points):
+    print("Fitting all flowers...\n")
     configs = []
+
+    three_petal_antispin = fit_three_petal_antispin(poi_points)
+    configs.append(three_petal_antispin)
 
     four_petal_antispin = fit_four_petal_antispin(poi_points)
     configs.append(four_petal_antispin)

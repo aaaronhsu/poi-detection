@@ -1,10 +1,7 @@
-import random
 import numpy as np
 from file_reader import FileReader
-from parametric import Parametric
 import graph
 import flowers
-import fitting
 
 # open the file that contains the coordinates of the poi
 file = FileReader("antispin.txt")
