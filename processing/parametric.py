@@ -1,4 +1,5 @@
 import math
+import random
 import numpy as np
 import fitting
 
@@ -17,53 +18,205 @@ class Parametric:
         self.coords = np.stack((self.x_coords, self.y_coords), 1)
         return self.x, self.y
 
-    def generate_loss(self, points):
-        # find the minimum distance between points and the parametric curve stored in self.x_coords and self.y_coords
+    def test_fit(self, poi_points, x_trans, y_trans, scale):
+        cpy_poi_points = poi_points.copy()
+        cpy_para_points = self.coords.copy()
 
-        loss = 0
+        loss = fitting.evaluate_transformation(
+            x_trans, y_trans, scale, cpy_poi_points, cpy_para_points
+        )
 
-        for point in points:
-            # pass in parametric and point to find min distance
-            min_dist = fitting.find_min_distance(self, point)
-            loss += min_dist[1]
+        print("the loss for ", x_trans, y_trans, scale, "is", loss)
 
-        # print("Loss from", points, loss)
+    def fit(self, poi_points):
+        cpy_poi_points = poi_points.copy()
 
-        return loss / len(points)
+        x_trans, y_trans = fitting.calculate_centroid(
+            cpy_poi_points
+        ) - fitting.calculate_centroid(
+            self.coords
+        )  # calculate the translation needed to move the points to the origin
+        scale = 1
 
-    def fit(self, points):
-        x_trans = 0
-        y_trans = 0
+        cpy_para_points = self.coords.copy()
 
-        cpy_points = points.copy()
-        print(points)
+        current_loss = fitting.evaluate_transformation(
+            x_trans, y_trans, scale, cpy_poi_points, cpy_para_points
+        )  # calculate the loss of the current transformation
 
-        current_loss = self.generate_loss(cpy_points)
+        loss = [current_loss]
+        config = [x_trans, y_trans, scale]
 
+        best_config = [x_trans, y_trans, scale]
+        best_loss = current_loss
+
+        num_iterations = 0
+
+        # ada is learning rate
+        ada = [0.1, 0.1, 0.1]
+
+        # TODO gradient descent on the scale of the parametric curve
         while True:
-            cpy_points[:, 0] -= 0.1
-            print("shifting x by 1, current loss is", current_loss)
-
-            new_loss = self.generate_loss(cpy_points)
-            print("new loss is", new_loss)
-
-            if new_loss > current_loss:
-                cpy_points[:, 0] += 0.1
+            num_iterations += 1
+            if num_iterations > 100:
+                print("Max iterations reached")
                 break
-            current_loss = new_loss
 
-        current_loss = new_loss
+            # check if the last 10 losses are within 0.001% of each other
+            last_10 = loss[-10:]
+            if len(loss) > 10 and max(last_10) - min(last_10) < 0.05 * max(last_10):
+                print("Converged at", num_iterations)
+                break
 
+            current_loss = loss[-1]
+
+            gradients = []
+
+            gradients.append(
+                fitting.evaluate_transformation(
+                    config[0] + random.random() * ada[0],
+                    config[1],
+                    config[2],
+                    cpy_poi_points,
+                    cpy_para_points,
+                )
+                - current_loss
+            )  # calculate config[0] gradient
+            gradients.append(
+                fitting.evaluate_transformation(
+                    config[0],
+                    config[1] + random.random() * ada[1],
+                    config[2],
+                    cpy_poi_points,
+                    cpy_para_points,
+                )
+                - current_loss
+            )  # calculate config[1] gradient
+            gradients.append(
+                fitting.evaluate_transformation(
+                    config[0],
+                    config[1],
+                    config[2] + random.random() * ada[2],
+                    cpy_poi_points,
+                    cpy_para_points,
+                )
+                - current_loss
+            )  # calculate config[2] gradient
+
+            # update the learning rates
+            for i in range(3):
+                ada[i] *= gradients[i] + 1
+                config[i] -= gradients[i]
+
+            # if num_iterations % 10 == 0:
+            #     print(config[0], config[1], config[2], loss[-1])
+            #     print(ada[0], ada[1], ada[2])
+            #     print("\n")
+
+            new_loss = fitting.evaluate_transformation(
+                config[0], config[1], config[2], cpy_poi_points, cpy_para_points
+            )  # calculate the loss of the current transformation
+            loss.append(new_loss)
+
+            if new_loss < best_loss:
+                best_loss = new_loss
+                best_config = config
+
+        return best_loss, fitting.transform(
+            cpy_para_points, best_config[0], best_config[1], best_config[2]
+        )
+
+    def fit_nesterov(self, poi_points):
+        cpy_poi_points = poi_points.copy()
+
+        x_trans, y_trans = fitting.calculate_centroid(
+            cpy_poi_points
+        ) - fitting.calculate_centroid(
+            self.coords
+        )  # calculate the translation needed to move the points to the origin
+        scale = 1
+
+        cpy_para_points = self.coords.copy()
+
+        current_loss = fitting.evaluate_transformation(
+            x_trans, y_trans, scale, cpy_poi_points, cpy_para_points
+        )  # calculate the loss of the current transformation
+
+        loss = [current_loss]
+        config = [x_trans, y_trans, scale]
+
+        # best_config = [x_trans, y_trans, scale, current_loss]
+
+        num_iterations = 0
+
+        # ada is learning rate, gamma is momentum
+        ada = [0.01, 0.01, 0.01]
+        gamma = [0.9, 0.9, 0.9]
+        velocity = [0.1, 0.1, 0.1]
+
+        # TODO gradient descent on the scale of the parametric curve
         while True:
-            cpy_points[:, 1] -= 0.1
-            print("shifting y by 1, current loss is", current_loss)
+            num_iterations += 1
+            if num_iterations > 1000:
+                print("Max iterations reached")
+                print(config[0], config[1], config[2], "generates a loss of", loss[-1])
 
-            new_loss = self.generate_loss(cpy_points)
-            print("new loss is", new_loss)
-
-            if new_loss > current_loss:
-                cpy_points[:, 1] += 0.1
                 break
-            current_loss = new_loss
 
-        return cpy_points
+            # check if the last 10 losses are within 0.001% of each other
+            last_10 = loss[-10:]
+            if len(loss) > 10 and max(last_10) - min(last_10) < 0.0001 * max(last_10):
+                print("Converged at", num_iterations)
+                print(config[0], config[1], config[2], "generates a loss of", loss[-1])
+                break
+
+            current_loss = loss[-1]
+
+            gradients = []
+
+            gradients.append(
+                fitting.evaluate_transformation(
+                    config[0] - gamma[0] * velocity[0],
+                    config[1],
+                    config[2],
+                    cpy_poi_points,
+                    cpy_para_points,
+                )
+                - current_loss
+            )  # calculate config[0] gradient
+            gradients.append(
+                fitting.evaluate_transformation(
+                    config[0],
+                    config[1] - gamma[1] * velocity[1],
+                    config[2],
+                    cpy_poi_points,
+                    cpy_para_points,
+                )
+                - current_loss
+            )  # calculate config[1] gradient
+            gradients.append(
+                fitting.evaluate_transformation(
+                    config[0],
+                    config[1],
+                    config[2] - gamma[2] * velocity[2],
+                    cpy_poi_points,
+                    cpy_para_points,
+                )
+                - current_loss
+            )  # calculate config[2] gradient
+
+            # update the learning rates
+            for i in range(3):
+                # see https://wiki.tum.de/display/lfdv/Adaptive+Learning+Rate+Method#:~:text=Adaptive%20learning%20rate%20methods%20are,the%20parameters%20of%20the%20network.
+                # nesterov accelerated gradient descent
+                velocity[i] = gamma[i] * velocity[i] + (ada[i] * gradients[i])
+                config[i] -= velocity[i]
+
+            print(config[0], config[1], config[2], loss[-1])
+
+            new_loss = fitting.evaluate_transformation(
+                config[0], config[1], config[2], cpy_poi_points, cpy_para_points
+            )  # calculate the loss of the current transformation
+            loss.append(new_loss)
+
+        return loss, fitting.transform(cpy_para_points, config[0], config[1], config[2])
