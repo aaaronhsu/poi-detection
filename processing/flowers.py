@@ -47,10 +47,10 @@ def fit_all(poi_points):
         {
             "loss": four_petal_anti_loss,
             "points": four_petal_anti_points,
-            "name": "4 Petal Anti-Spin",
+            "name": "4 petal antispin",
         }
     )
-    print("Evaluated antsipin loss:", four_petal_anti_loss, "\n")
+    print("Evaluated antispin loss:", four_petal_anti_loss, "\n")
 
     print("Testing circle...")
     circle_loss, circle_points = Parametric(gen_circle_x(0, 1), gen_circle_y(0, 1)).fit(
