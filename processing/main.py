@@ -7,7 +7,7 @@ import flowers
 import fitting
 
 # open the file that contains the coordinates of the poi
-file = FileReader("circle.txt")
+file = FileReader("antispin.txt")
 coordinates = file.read_file_content()  # read and parse the file content
 x_coords, y_coords = coordinates  # you can extract the coordinates like this
 

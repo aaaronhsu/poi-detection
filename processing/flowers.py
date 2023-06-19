@@ -34,30 +34,44 @@ def circle_y(t):
     return np.sin(t)
 
 
-def fit_all(poi_points):
-    cpy_poi_points = poi_points.copy()
-
-    configs = []
-
+def fit_four_petal_antispin(poi_points):
     print("Testing 4 petal antispin...")
     four_petal_anti_loss, four_petal_anti_points = Parametric(
         gen_antispin_x(0, 1, 4), gen_antispin_y(0, 1, 4)
-    ).fit(cpy_poi_points)
-    configs.append(
-        {
-            "loss": four_petal_anti_loss,
-            "points": four_petal_anti_points,
-            "name": "4 petal antispin",
-        }
-    )
+    ).fit(poi_points)
+
     print("Evaluated antispin loss:", four_petal_anti_loss, "\n")
 
+    return {
+        "loss": four_petal_anti_loss,
+        "points": four_petal_anti_points,
+        "name": "4 petal antispin",
+    }
+
+
+def fit_circle(poi_points):
     print("Testing circle...")
     circle_loss, circle_points = Parametric(gen_circle_x(0, 1), gen_circle_y(0, 1)).fit(
-        cpy_poi_points
+        poi_points
     )
-    configs.append({"loss": circle_loss, "points": circle_points, "name": "Circle"})
+
     print("Evaluated circle loss:", circle_loss, "\n")
+
+    return {
+        "loss": circle_loss,
+        "points": circle_points,
+        "name": "circle",
+    }
+
+
+def fit_all(poi_points):
+    configs = []
+
+    four_petal_antispin = fit_four_petal_antispin(poi_points)
+    configs.append(four_petal_antispin)
+
+    circle = fit_circle(poi_points)
+    configs.append(circle)
 
     # sort configs by loss
     sorted_list = sorted(configs, key=lambda x: x["loss"])
