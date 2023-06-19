@@ -58,29 +58,14 @@ class Parametric:
         # TODO gradient descent on the scale of the parametric curve
         while True:
             num_iterations += 1
-            if num_iterations > 250:
+            if num_iterations > 100:
                 print("Max iterations reached")
-                print(
-                    best_config[0],
-                    best_config[1],
-                    best_config[2],
-                    "generates a loss of",
-                    best_loss,
-                )
-
                 break
 
             # check if the last 10 losses are within 0.001% of each other
             last_10 = loss[-10:]
-            if len(loss) > 10 and max(last_10) - min(last_10) < 0.01 * max(last_10):
+            if len(loss) > 10 and max(last_10) - min(last_10) < 0.05 * max(last_10):
                 print("Converged at", num_iterations)
-                print(
-                    best_config[0],
-                    best_config[1],
-                    best_config[2],
-                    "generates a loss of",
-                    best_loss,
-                )
                 break
 
             current_loss = loss[-1]
@@ -123,10 +108,10 @@ class Parametric:
                 ada[i] *= gradients[i] + 1
                 config[i] -= gradients[i]
 
-            if num_iterations % 10 == 0:
-                print(config[0], config[1], config[2], loss[-1])
-                print(ada[0], ada[1], ada[2])
-                print("\n")
+            # if num_iterations % 10 == 0:
+            #     print(config[0], config[1], config[2], loss[-1])
+            #     print(ada[0], ada[1], ada[2])
+            #     print("\n")
 
             new_loss = fitting.evaluate_transformation(
                 config[0], config[1], config[2], cpy_poi_points, cpy_para_points
@@ -137,7 +122,7 @@ class Parametric:
                 best_loss = new_loss
                 best_config = config
 
-        return loss, fitting.transform(
+        return best_loss, fitting.transform(
             cpy_para_points, best_config[0], best_config[1], best_config[2]
         )
 
