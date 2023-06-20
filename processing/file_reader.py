@@ -1,9 +1,27 @@
 import numpy as np
+import time
 
 
 class FileReader:
     def __init__(self, filename):
         self.filename = filename
+        self.coords = np.empty((0, 2))
+
+    def read_file_content_realtime(self):
+        with open("processing/" + self.filename, "r") as f:
+            while True:
+                line = f.readline()
+                if not line or line == "\n":
+                    time.sleep(0.1)  # wait for 100ms before checking again
+                    f.seek(0, 1)  # move the file pointer to the current position
+                else:
+                    # strip the newline character
+                    line = line.strip().split(",")
+                    line = [float(x) for x in line]
+                    self.coords = np.append(
+                        self.coords, [[float(line[0]), float(line[1])]], axis=0
+                    )
+                    print("added", line, "to coords")
 
     def read_file_content(self):
         with open("processing/" + self.filename, "r") as f:
