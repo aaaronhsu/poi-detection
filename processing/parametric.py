@@ -58,7 +58,7 @@ class Parametric:
         # TODO gradient descent on the scale of the parametric curve
         while True:
             num_iterations += 1
-            if num_iterations > 100:
+            if num_iterations > 25:
                 print("Max iterations reached")
                 break
 
@@ -122,8 +122,12 @@ class Parametric:
                 best_loss = new_loss
                 best_config = config
 
-        return best_loss, fitting.transform(
-            cpy_para_points, best_config[0], best_config[1], best_config[2]
+        return (
+            best_loss,
+            fitting.transform(
+                cpy_para_points, best_config[0], best_config[1], best_config[2]
+            ),
+            best_config,
         )
 
     def fit_nesterov(self, poi_points):

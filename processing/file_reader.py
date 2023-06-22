@@ -11,6 +11,7 @@ class FileReader:
         self.coords = np.empty((0, 2))
 
     def read_file_content_realtime(self):
+        previous_config = None
         with open("processing/" + self.filename, "r") as f:
             while True:
                 line = f.readline()
@@ -26,7 +27,12 @@ class FileReader:
                     )
                     print("added", line, "to coords")
 
-                    best_fit = flowers.fit_all(self.coords)
+                    if previous_config:
+                        best_fit, previous_config = flowers.fit_all(
+                            self.coords, previous_config
+                        )
+                    else:
+                        best_fit, previous_config = flowers.fit_all(self.coords)
                     graph.create_graph_multiple([self.coords, best_fit["points"]])
 
     def read_file_content(self):
