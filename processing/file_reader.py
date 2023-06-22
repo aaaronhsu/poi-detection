@@ -1,6 +1,9 @@
 import numpy as np
 import time
 
+import flowers
+import graph
+
 
 class FileReader:
     def __init__(self, filename):
@@ -22,6 +25,9 @@ class FileReader:
                         self.coords, [[float(line[0]), float(line[1])]], axis=0
                     )
                     print("added", line, "to coords")
+
+                    best_fit = flowers.fit_all(self.coords)
+                    graph.create_graph_multiple([self.coords, best_fit["points"]])
 
     def read_file_content(self):
         with open("processing/" + self.filename, "r") as f:

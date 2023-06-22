@@ -10,7 +10,8 @@ import flowers
 
 # best_fit = flowers.fit_all(file.coords)
 
+# # graph.create_graph(file.coords)
 # graph.create_graph_multiple([file.coords, best_fit["points"]])
 
-file = FileReader("antispin.txt")
+file = FileReader("file.txt")
 file.read_file_content_realtime()
