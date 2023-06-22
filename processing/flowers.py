@@ -34,7 +34,7 @@ def circle_y(t):
     return np.sin(t)
 
 
-def fit_three_petal_antispin(poi_points, prior=[0, 0, 1]):
+def fit_three_petal_antispin(poi_points, prior=[0, 0, 1], max_iterations=25):
     print("Testing 3 petal antispin...")
 
     parametric = None
@@ -45,7 +45,7 @@ def fit_three_petal_antispin(poi_points, prior=[0, 0, 1]):
     )
 
     three_petal_anti_loss, three_petal_anti_points, best_config = parametric.fit(
-        poi_points
+        poi_points, max_iterations
     )
 
     print("Evaluated three petal antispin loss:", three_petal_anti_loss)
@@ -59,7 +59,7 @@ def fit_three_petal_antispin(poi_points, prior=[0, 0, 1]):
     }
 
 
-def fit_four_petal_antispin(poi_points, prior=[0, 0, 1]):
+def fit_four_petal_antispin(poi_points, prior=[0, 0, 1], max_iterations=25):
     print("Testing 4 petal antispin...")
 
     parametric = None
@@ -70,7 +70,7 @@ def fit_four_petal_antispin(poi_points, prior=[0, 0, 1]):
     )
 
     four_petal_anti_loss, four_petal_anti_points, best_config = parametric.fit(
-        poi_points
+        poi_points, max_iterations
     )
 
     print("Evaluated four petal antispin loss:", four_petal_anti_loss)
@@ -84,7 +84,7 @@ def fit_four_petal_antispin(poi_points, prior=[0, 0, 1]):
     }
 
 
-def fit_circle(poi_points, prior=[0, 0, 1]):
+def fit_circle(poi_points, prior=[0, 0, 1], max_iterations=25):
     print("Testing circle...")
 
     parametric = None
@@ -94,7 +94,7 @@ def fit_circle(poi_points, prior=[0, 0, 1]):
         gen_circle_y(prior[1], prior[2]),
     )
 
-    circle_loss, circle_points, best_config = parametric.fit(poi_points)
+    circle_loss, circle_points, best_config = parametric.fit(poi_points, max_iterations)
 
     print("Evaluated circle loss:", circle_loss)
     print("Config for circle:", best_config, "\n")
@@ -107,17 +107,19 @@ def fit_circle(poi_points, prior=[0, 0, 1]):
     }
 
 
-def fit_all(poi_points, prior=[[0, 0, 1], [0, 0, 1], [0, 0, 1]]):
+def fit_all(poi_points, prior=[[0, 0, 1], [0, 0, 1], [0, 0, 1]], max_iterations=25):
     print("Fitting all flowers...\n")
     configs = []
 
-    three_petal_antispin = fit_three_petal_antispin(poi_points, prior[0])
+    three_petal_antispin = fit_three_petal_antispin(
+        poi_points, prior[0], max_iterations
+    )
     configs.append(three_petal_antispin)
 
-    four_petal_antispin = fit_four_petal_antispin(poi_points, prior[1])
+    four_petal_antispin = fit_four_petal_antispin(poi_points, prior[1], max_iterations)
     configs.append(four_petal_antispin)
 
-    circle = fit_circle(poi_points, prior[2])
+    circle = fit_circle(poi_points, prior[2], max_iterations)
     configs.append(circle)
 
     # sort configs by loss

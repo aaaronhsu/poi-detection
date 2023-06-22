@@ -28,7 +28,7 @@ class Parametric:
 
         print("the loss for ", x_trans, y_trans, scale, "is", loss)
 
-    def fit(self, poi_points):
+    def fit(self, poi_points, max_iterations=25):
         cpy_poi_points = poi_points.copy()
 
         x_trans, y_trans = fitting.calculate_centroid(
@@ -58,7 +58,7 @@ class Parametric:
         # TODO gradient descent on the scale of the parametric curve
         while True:
             num_iterations += 1
-            if num_iterations > 25:
+            if num_iterations > max_iterations:
                 print("Max iterations reached")
                 break
 
