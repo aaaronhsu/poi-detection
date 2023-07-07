@@ -8,13 +8,22 @@ file = FileReader("test.txt")
 
 # graph.create_graph(file.points)
 
-four_petal_antispin = Parametric(flowers.gen_antispin(0, 0, 1, 4), 250)
+# four_petal_antispin = Parametric(flowers.gen_antispin(0, 0, 1, 3), 250)
 
-graph.create_graph(four_petal_antispin.points)
+circle = Parametric(flowers.gen_circle(0, 0, 1))
 
-four_petal_antispin.dilate(5)
+graph.create_graph(circle.points)
 
-graph.create_graph(four_petal_antispin.points)
+loss = circle.calculate_loss(file.points)
+
+loss2 = circle.calculate_translation_loss(file.points, (1, 1))
+
+loss3 = circle.calculate_dilation_loss(file.points, 5)
+print(loss)
+print(loss2)
+print(loss3)
+
+graph.create_graph(circle.points, file.points)
 
 
 # realtime DO NOT USE IF FILE IS LARGE

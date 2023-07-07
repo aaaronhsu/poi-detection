@@ -7,8 +7,8 @@ def gen_antispin(
     x: float, y: float, radius: float, petals: int, rot=0
 ) -> tuple[Callable[..., float], Callable[..., float], Point]:
     return (
-        gen_antispin_x(x, radius, petals, rot),
-        gen_antispin_y(y, radius, petals, rot),
+        gen_antispin_x(x, radius / 2, petals, rot),
+        gen_antispin_y(y, radius / 2, petals, rot),
         Point(x, y),
     )
 
@@ -16,7 +16,7 @@ def gen_antispin(
 def gen_circle(
     x: float, y: float, radius: float
 ) -> tuple[Callable[..., float], Callable[..., float], Point]:
-    return gen_circle_x(x, radius), gen_circle_y(y, radius), (x, y)
+    return gen_circle_x(x, radius), gen_circle_y(y, radius), Point(x, y)
 
 
 def gen_antispin_x(

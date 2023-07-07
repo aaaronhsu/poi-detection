@@ -8,7 +8,7 @@ class Parametric:
     def __init__(
         self,
         function_data: tuple[Callable[..., float], Callable[..., float], Point],
-        num_points: int,
+        num_points: int = 250,
     ) -> None:
         self.center: Point = function_data[2]
         self.points: list[Point] = []
@@ -28,7 +28,7 @@ class Parametric:
 
     def calculate_min_distance(self, point: Point, points: list[Point]) -> float:
         # calculate the minimum distance between point and list of points
-        min_dist = point.distance()
+        min_dist = point.calculate_distance(points[0])
         for pt in points:
             distance = point.calculate_distance(pt)
             if distance < min_dist:
@@ -42,21 +42,21 @@ class Parametric:
         translation: tuple[float, float],
     ) -> float:
         # calculate the loss of the fit after translating the parametric curve by translation
-        self.translate_points(translation)
+        self.translate(translation)
         loss = self.calculate_loss(poi_points)
-        self.translate_points((-translation[0], -translation[1]))
+        self.translate((-translation[0], -translation[1]))
 
         return loss
 
     def calculate_dilation_loss(
         self,
         poi_points: list[Point],
-        dilation: tuple[float, Point],
+        dilation: float,
     ) -> float:
         # calculate the loss of the fit after dilating the parametric curve by dilation
-        self.dilate_points(dilation)
+        self.dilate(dilation)
         loss = self.calculate_loss(poi_points)
-        self.dilate_points([1 / dilation[0], dilation[1]])
+        self.dilate(1 / dilation)
 
         return loss
 
