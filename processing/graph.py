@@ -1,15 +1,31 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from point import Point
 
 
-def create_graph(coords):
-    plt.scatter(coords[:, 0], coords[:, 1])
-    plt.show()
+def create_graph(*point_list: list[Point]) -> None:
+    colors: list[str] = [
+        "red",
+        "blue",
+        "green",
+        "purple",
+        "orange",
+        "yellow",
+        "pink",
+        "black",
+    ]
 
+    point_list_num: int = 0
 
-def create_graph_multiple(coords):
-    colors = ["red", "blue", "green", "purple", "orange", "yellow", "pink", "black"]
+    for points in point_list:
+        x_coords: list[float] = []
+        y_coords: list[float] = []
 
-    for i in range(len(coords)):
-        plt.scatter(coords[i][:, 0], coords[i][:, 1], color=colors[i])
+        for point in points:
+            x_coords.append(point.x)
+            y_coords.append(point.y)
+
+        plt.scatter(x_coords, y_coords, color=colors[point_list_num % len(colors)])
+        point_list_num += 1
+
     plt.show()

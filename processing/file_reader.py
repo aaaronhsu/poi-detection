@@ -1,52 +1,26 @@
-import numpy as np
-import time
-
-import flowers
-import graph
+from point import Point
 
 
 class FileReader:
-    def __init__(self, filename):
-        self.filename = filename
-        self.coords = np.empty((0, 2))
+    def __init__(self, filename) -> None:
+        self.filename: str = filename
+        self.points: list[Point] = []
+        self.file_content: list = []
 
-    def read_file_content_realtime(self):
-        previous_config = None
-        with open("processing/" + self.filename, "r") as f:
-            while True:
-                line = f.readline()
-                if not line or line == "\n":
-                    time.sleep(0.1)  # wait for 100ms before checking again
-                    f.seek(0, 1)  # move the file pointer to the current position
-                else:
-                    # strip the newline character
-                    line = line.strip().split(",")
-                    line = [float(x) for x in line]
-                    self.coords = np.append(
-                        self.coords, [[float(line[0]), float(line[1])]], axis=0
-                    )
-                    print("added", line, "to coords")
+        self.read_file_content()
 
-                    if previous_config:
-                        best_fit, previous_config = flowers.fit_all(
-                            self.coords, previous_config
-                        )
-                    else:
-                        best_fit, previous_config = flowers.fit_all(self.coords)
-                    graph.create_graph_multiple([self.coords, best_fit["points"]])
-
-    def read_file_content(self):
-        with open("processing/" + self.filename, "r") as f:
+    def read_file_content(self) -> list[Point]:
+        with open("processing/data/" + self.filename, "r") as f:
             self.file_content = f.readlines()
         return self.parse_file_content()
 
-    def parse_file_content(self):
+    def parse_file_content(self) -> list[Point]:
         self.file_content = [x.strip() for x in self.file_content]
         self.file_content = [x.split(",") for x in self.file_content]
         self.file_content = [[float(x) for x in y] for y in self.file_content]
 
         # shape of coords is (n, 2)
-        self.coords = np.array(self.file_content)
+        for x, y in self.file_content:
+            self.points.append(Point(x, y))
 
-        # but we return the transpose so we can easily access the x and y coordinates
-        return self.coords.T
+        return self.points
