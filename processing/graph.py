@@ -3,19 +3,7 @@ import numpy as np
 from point import Point
 
 
-def create_graph(points: list[Point]) -> None:
-    x_coords: list[float] = []
-    y_coords: list[float] = []
-
-    for point in points:
-        x_coords.append(point.x)
-        y_coords.append(point.y)
-
-    plt.scatter(x_coords, y_coords)
-    plt.show()
-
-
-def create_graph_multiple(*point_list: list[Point]) -> None:
+def create_graph(*point_list: list[Point]) -> None:
     colors: list[str] = [
         "red",
         "blue",

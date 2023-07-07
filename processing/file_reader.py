@@ -4,8 +4,10 @@ from point import Point
 class FileReader:
     def __init__(self, filename) -> None:
         self.filename: str = filename
-        self.coords: list[Point] = []
+        self.points: list[Point] = []
         self.file_content: list = []
+
+        self.read_file_content()
 
     def read_file_content(self) -> list[Point]:
         with open("processing/" + self.filename, "r") as f:
@@ -19,6 +21,6 @@ class FileReader:
 
         # shape of coords is (n, 2)
         for x, y in self.file_content:
-            self.coords.append(Point(x, y))
+            self.points.append(Point(x, y))
 
-        return self.coords
+        return self.points
