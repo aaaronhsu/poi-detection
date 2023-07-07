@@ -10,7 +10,7 @@ class FileReader:
         self.read_file_content()
 
     def read_file_content(self) -> list[Point]:
-        with open("processing/" + self.filename, "r") as f:
+        with open("processing/data/" + self.filename, "r") as f:
             self.file_content = f.readlines()
         return self.parse_file_content()
 
