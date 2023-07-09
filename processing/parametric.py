@@ -114,7 +114,7 @@ class Parametric:
     ) -> (
         float
     ):  # fit the parametric curve to the points, with timeout default to 5 seconds
-        print("fitting points for", timeout, "seconds...")
+        print("Fitting points for", timeout, "seconds...")
         start_time: float = time.time()
 
         # initialize the parametric curve to the center and radius of the poi points
@@ -126,6 +126,7 @@ class Parametric:
         best_loss: float = previous_loss
         best_points: list[Point] = self.points
         best_center: Point = self.center
+        iterations_since_best: int = 0
 
         # initialize gradient descent velocities
         x_velocity: float = 0
@@ -134,6 +135,8 @@ class Parametric:
         discounting_factor: float = 0.2
 
         while time.time() - start_time < timeout:
+            if iterations_since_best > 30:
+                break
             # calculate the gradient of the loss function with respect to each parameter
             current_loss = previous_loss
 
@@ -163,8 +166,11 @@ class Parametric:
                 best_loss = previous_loss
                 best_points = self.points
                 best_center = self.center
+                iterations_since_best = 0
+            iterations_since_best += 1
 
         # set the parametric curve to the best fit
+        print("Fit complete in", round(time.time() - start_time, 2), "seconds!")
         self.points = best_points
         self.center = best_center
 

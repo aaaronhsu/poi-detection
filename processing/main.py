@@ -4,7 +4,7 @@ import graph
 import flowers
 from parametric import Parametric
 
-file = FileReader("antispin.txt")
+file = FileReader("test.txt")
 
 # graph.create_graph(file.points)
 
