@@ -1,7 +1,6 @@
-import random
 from typing import Callable
 from point import Point
-from math import pi, sqrt
+from math import pi
 import numpy as np
 import time
 
