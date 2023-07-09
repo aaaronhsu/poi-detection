@@ -26,9 +26,9 @@ while running:
             elif event.key == pygame.K_RETURN:
                 running = False
 
-                with open("processing/test.txt", "w") as f:
+                with open("processing/data/test.txt", "w") as f:
                     for point in points:
-                        f.write(str(point[0] / 100) + "," + str(point[1] / 100) + "\n")
+                        f.write(str(point[0]) + "," + str(point[1]) + "\n")
             elif event.key == pygame.K_BACKSPACE:
                 if len(points) > 0:
                     points.pop()
