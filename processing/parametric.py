@@ -14,6 +14,7 @@ class Parametric:
     ) -> None:
         self.center: Point = function_data[2]
         self.points: list[Point] = []
+        self.type: str = function_data[3]
 
         # generate points with t = [0, 2pi]
         t = np.linspace(0, 2 * pi, num_points)
@@ -114,7 +115,7 @@ class Parametric:
     ) -> (
         float
     ):  # fit the parametric curve to the points, with timeout default to 5 seconds
-        print("Fitting points for", timeout, "seconds...")
+        print("Fitting points to", self.type, "for", timeout, "seconds...")
         start_time: float = time.time()
 
         # initialize the parametric curve to the center and radius of the poi points
@@ -170,7 +171,7 @@ class Parametric:
             iterations_since_best += 1
 
         # set the parametric curve to the best fit
-        print("Fit complete in", round(time.time() - start_time, 2), "seconds!")
+        print("Fit complete in", round(time.time() - start_time, 2), "seconds!\n")
         self.points = best_points
         self.center = best_center
 

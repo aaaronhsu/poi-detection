@@ -8,10 +8,7 @@ file = FileReader("test.txt")
 
 # graph.create_graph(file.points)
 
-four_petal_antispin = Parametric(flowers.gen_antispin(0, 0, 1, 4), 250)
+best_parametric = file.fit_all()
 
-circle = Parametric(flowers.gen_circle(0, 0, 1), 250)
-
-four_petal_antispin.fit_points(file.points)
-
-graph.create_graph(file.points, four_petal_antispin.points)
+print("Best fit:", best_parametric.type)
+graph.create_graph(file.points, best_parametric.points)

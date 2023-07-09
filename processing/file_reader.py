@@ -1,4 +1,6 @@
 from point import Point
+from parametric import Parametric
+import flowers
 
 
 class FileReader:
@@ -24,3 +26,13 @@ class FileReader:
             self.points.append(Point(x, y))
 
         return self.points
+
+    def fit_all(self) -> Parametric:
+        four_petal_antispin = Parametric(flowers.gen_antispin(0, 0, 1, 4), 250)
+        four_petal_antispin_loss = four_petal_antispin.fit_points(self.points)
+
+        circle = Parametric(flowers.gen_circle(0, 0, 1), 250)
+        circle_loss = circle.fit_points(self.points)
+
+        if four_petal_antispin_loss < circle_loss:
+            return four_petal_antispin
