@@ -111,7 +111,7 @@ class Parametric:
         self.dilate(poi_points_radius / self.find_radius(self.points, self.center))
 
     def fit_points(
-        self, poi_points: list[Point], timeout: int = 5
+        self, poi_points: list[Point], timeout: float = 5
     ) -> (
         float
     ):  # fit the parametric curve to the points, with timeout default to 5 seconds
@@ -171,7 +171,13 @@ class Parametric:
             iterations_since_best += 1
 
         # set the parametric curve to the best fit
-        print("Fit complete in", round(time.time() - start_time, 2), "seconds!\n")
+        print(
+            "Fitting to",
+            self.type,
+            "complete in",
+            round(time.time() - start_time, 2),
+            "seconds!\n",
+        )
         self.points = best_points
         self.center = best_center
 

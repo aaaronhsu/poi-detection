@@ -6,8 +6,6 @@ from parametric import Parametric
 
 file = FileReader("test.txt")
 
-# graph.create_graph(file.points)
-
 best_parametric = file.fit_all()
 
 print("Best fit:", best_parametric.type)

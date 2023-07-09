@@ -27,12 +27,23 @@ class FileReader:
 
         return self.points
 
-    def fit_all(self) -> Parametric:
+    def fit_all(self, timeout: float = 5) -> Parametric:
+        # fit all the parametric curves and return the best fit
+        num_parametrics = 2
+        time_per_parametric = round(timeout / num_parametrics, 2)
+
+        parametrics = []
+
         four_petal_antispin = Parametric(flowers.gen_antispin(0, 0, 1, 4), 250)
-        four_petal_antispin_loss = four_petal_antispin.fit_points(self.points)
+        four_petal_antispin_loss = four_petal_antispin.fit_points(
+            self.points, time_per_parametric
+        )
+        parametrics.append((four_petal_antispin, four_petal_antispin_loss))
 
         circle = Parametric(flowers.gen_circle(0, 0, 1), 250)
-        circle_loss = circle.fit_points(self.points)
+        circle_loss = circle.fit_points(self.points, time_per_parametric)
+        parametrics.append((circle, circle_loss))
 
-        if four_petal_antispin_loss < circle_loss:
-            return four_petal_antispin
+        parametrics = sorted(parametrics, key=lambda x: x[1])
+
+        return parametrics[0][0]
