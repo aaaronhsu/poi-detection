@@ -87,3 +87,13 @@ class VideoParser:
                 print("Detecting objects in frame", f"{frame.number}...")
                 frame_data = self.model(frame.image)
                 frame.add_data(frame_data.xyxy[0])
+
+    def export_coordinates(self, path: str = "poi_coordinates.txt") -> None:
+        # exports the coordinates of the poi into a text file
+
+        with open(f"processing/data/{path}", "w+") as f:
+            for frame in self.frames:
+                if len(frame.poi_coordinates) > 0:
+                    f.write(
+                        f"{frame.poi_coordinates[0][0]},{frame.poi_coordinates[0][1]}\n"
+                    )
