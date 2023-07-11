@@ -20,7 +20,7 @@ class Frame:
         self.poi_coordinates = []
         self.hand_coordinates = []
 
-        # differntiate between poi and hand
+        # differentiate between poi and hand
         for data in self.data:
             if data[5] == 0:
                 self.poi_coordinates.append(
@@ -78,6 +78,7 @@ class VideoParser:
             for frame in self.frames:
                 print("Detecting objects in frame", f"{frame.number}...")
                 frame_data = self.model(frame.image)
+                # frame_data.show() shows the image with the detected objects
                 frame.add_data(frame_data.xyxy[0])
         # if frames are inputted, detect objects in the inputted frames
         else:
@@ -86,11 +87,13 @@ class VideoParser:
             for frame in frames:
                 print("Detecting objects in frame", f"{frame.number}...")
                 frame_data = self.model(frame.image)
+                # frame_data.show() shows the image with the detected objects
                 frame.add_data(frame_data.xyxy[0])
 
     def export_coordinates(self, path: str = "poi_coordinates.txt") -> None:
         # exports the coordinates of the poi into a text file
 
+        # TODO: note that this only exports the first poi coordinate, not all of them. there is no classification between poi controlled by different hands
         with open(f"processing/data/{path}", "w+") as f:
             for frame in self.frames:
                 if len(frame.poi_coordinates) > 0:
