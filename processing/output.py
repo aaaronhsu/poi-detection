@@ -29,3 +29,8 @@ def create_graph(*point_list: list[Point]) -> None:
         point_list_num += 1
 
     plt.show()
+
+
+def overlay_video(video_path: str, *point_list: list[Point]) -> None:
+    # overlay the video with the parametric curve
+    pass
