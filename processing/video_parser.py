@@ -60,7 +60,7 @@ class VideoParser:
         for frame_num in range(0, int(self.video.duration * fps)):
             print("Parsing frame", frame_num, "of", int(self.video.duration * fps - 1))
             image = Image.fromarray(self.video.get_frame(frame_num / fps))
-
+            # image.show()  # shows parsed image
             self.frames.append(Frame(image, frame_num))
 
         return self.frames
@@ -78,7 +78,7 @@ class VideoParser:
             for frame in self.frames:
                 print("Detecting objects in frame", f"{frame.number}...")
                 frame_data = self.model(frame.image)
-                # frame_data.show() shows the image with the detected objects
+                # frame_data.show()  # shows the image with the detected objects
                 frame.add_data(frame_data.xyxy[0])
         # if frames are inputted, detect objects in the inputted frames
         else:
