@@ -1,3 +1,3 @@
 # poi-detection
 
-old version, view [repo](https://github.com/aaaronhsu/poi) for updated version, built with Rust and an updated YOLO model (YOLOv8).
+old version, view new [repo](https://github.com/aaaronhsu/poi) for updated version, built with Rust and an updated YOLO model (YOLOv8).
